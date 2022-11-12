@@ -22,7 +22,7 @@ function sampleTesting(sample) {
     Object.entries(outcome1).forEach(([key, value]) => {
       d3.select("#sample-metadata")
         .append("h5")
-        .text(`${key.toLowerCase ()}:${value}`);
+        .text(`${key.toLowerCase()}:${value}`);
     });
 
     // Build Gauge Chart
@@ -46,20 +46,20 @@ function barcharts(sample) {
     let outcome1 = outcome[0];
 
     //pull data from sample_values, otu_ids, otu_labels
-    let sample_values = outcome1.sample_values;
-    let otu_ids = outcome1.otu_ids;
-    let otu_labels = outcome1.otu_labels;
+    let sample_value = outcome1.sample_values;
+    let otu_id = outcome1.otu_ids;
+    let otu_label = outcome1.otu_labels;
 
     // create a horizontal bar chart with a dropdown menu
     //getting id label for the bar chart, then backward the data from largest to smallest for the first 10 OTUs
-    let yticks = otu_ids
+    let yticks = otu_id
       .slice(0, 10)
       .map((object) => `OTU ${object}`)
       .reverse();
     // adding the values for the barchart
-    let xticks = sample_values.slice(0, 10).reverse();
+    let xticks = sample_value.slice(0, 10).reverse();
     // adding label for the chart when hovertext
-    let labels = otu_labels.slice(0, 10);
+    let labels = otu_label.slice(0, 10);
 
     let trace = {
       y: yticks,
@@ -81,12 +81,33 @@ function barcharts(sample) {
 
     //using Plotly to draw a chart
     Plotly.newPlot("bar", [trace], layout);
+
+    //Create a bubble chart
+    //load the data
+    bubble_chart = [
+      {
+        x: otu_id,
+        y: sample_value,
+        text: otu_label,
+        mode: "markers",
+        marker: {
+          color: otu_id,
+          size: sample_value,
+        },
+      },
+    ];
+
+    //create layer:
+    let layout1 = {
+      title: "Microbial Species",
+      hovermode: "closest",
+      xaxis: {
+        title: "OTU ID",
+      },
+    };
+    Plotly.newPlot("bubble", [bubble_chart], layout1);
   });
 }
-
-
-//Create a bubble chart
-
 
 function startup() {
   // Load data from json file
@@ -110,11 +131,8 @@ function startup() {
     // Calls function to build metadata
     sampleTesting(sample1);
 
-    // Calls function to build barchart
+    // Calls function to build barchart & bubble chart
     barcharts(sample1);
-
-    // // Calls function to build bubble chart
-    // buildBubbleChart(sample1);
   });
 }
 // Function to update drop down when selection changes
@@ -125,10 +143,7 @@ function optionChanged(item) {
 
   // Calls function to build the bar chart
   barcharts(item);
-
-  // Call function to build bubble chart
-  // buildBubbleChart(item);
 }
 
-// Calls to initialize function
+// Calls function
 startup();
