@@ -26,7 +26,7 @@ function sampleTesting(sample) {
     });
 
     // Build Gauge Chart
-    // buildGauge(outcome1.wfreq);
+    buildGauge(outcome1.wfreq);
   });
 }
 
@@ -82,20 +82,17 @@ function barcharts(sample) {
     //using Plotly to draw a chart
     Plotly.newPlot("bar", [trace], layout);
 
-    //Create a bubble chart
-    //load the data
-    bubble_chart = [
-      {
-        x: otu_id,
-        y: sample_value,
-        text: otu_label,
-        mode: "markers",
-        marker: {
-          color: otu_id,
-          size: sample_value,
-        },
+    //create a bubble chart
+    let bubble_chart = {
+      x: otu_id,
+      y: sample_value,
+      text: otu_label,
+      mode: "markers",
+      marker: {
+        color: otu_id,
+        size: sample_value,
       },
-    ];
+    };
 
     //create layer:
     let layout1 = {
@@ -109,41 +106,38 @@ function barcharts(sample) {
   });
 }
 
+//create a startup function
 function startup() {
   // Load data from json file
   let data = d3.json(url);
-  console.log(data);
 
-  // Accesses the dropdown selector from index.html
-  var select = d3.select("#selDataset");
+  // Access the dropdown selector from index.html
+  let select = d3.select("#selDataset");
 
-  d3.json(url).then((data) => {
-    let sampleNames = data.names;
-    //console.log(sampleNames);
+  data.then((data) => {
+    let samplenames = data.names;
 
-    // Finds one sample to load charts and demographic info
-    sampleNames.forEach((sample) => {
+    // loading sample to chart and demographic info
+    samplenames.forEach((sample) => {
       select.append("option").text(sample).property("value", sample);
     });
 
-    let sample1 = sampleNames[0];
+    let sample1 = samplenames[0];
 
-    // Calls function to build metadata
+    // Calling function to sampleTesting
     sampleTesting(sample1);
 
-    // Calls function to build barchart & bubble chart
+    // Calling function to build barchart & bubble chart
     barcharts(sample1);
   });
 }
 // Function to update drop down when selection changes
 function optionChanged(item) {
   // Calls function to update metadata
-  sampleTesting(item);
-  //console.log(item)
-
-  // Calls function to build the bar chart
-  barcharts(item);
+  sampleTesting(item),
+    // Calls function to build the bar chart
+    barcharts(item);
 }
 
-// Calls function
+// Call start function
 startup();
