@@ -23,10 +23,7 @@ function sampleTesting(sample) {
       d3.select("#sample-metadata")
         .append("h5")
         .text(`${key.toLowerCase()}:${value}`);
-    });
-
-    // Build Gauge Chart
-    buildGauge(outcome1.wfreq);
+    })
   });
 }
 
